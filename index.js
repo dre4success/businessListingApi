@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const keys = require("./config/dev");
 require("./models/Business");
+require('./models/Client');
 
 mongoose.connect(keys.mongoURI, {
 	useMongoClient: true
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 require('./routes/bizRoute')(app);
+require('./routes/clientRoute')(app);
 
 app.use((err, req, res, next) => {
 	res.status(500).json(err.message);
