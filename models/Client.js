@@ -18,27 +18,8 @@ const clientSchema = new Schema({
 		required: true,
 		minlength: 7
 	}, 
-	tokens: [{
-		key: {
-			type: String,
-			required: true
-		}
-	}]
+	token: String
 });
-
-clientSchema.methods.generateToken = async function() {
-	// const access = 'auth'
-	const key = jwt
-		.sign({ _id: this._id.toHexString() }, keys.JWT_SECRET).toString();
-
-	this.tokens.push({key});
-
-/*	return await this.save();*/
-
-	return this.save().then(() => {
-		return key;
-	});
-};
 
 clientSchema.pre("save", function(next) {
 	if (this.isModified("password")) {
