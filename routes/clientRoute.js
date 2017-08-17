@@ -10,4 +10,9 @@ module.exports = app => {
 		client = await new Client(req.body).save();
 		res.header("x-auth", req.body.token).send(client);
 	});
+
+	app.post('/api/client/login', async (req, res) => {
+		const client = await Client.findByCred(req.body.email, req.body.password);
+		res.header('x-auth', client.token).send(client);
+	})
 };
