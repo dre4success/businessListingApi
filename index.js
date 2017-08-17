@@ -13,6 +13,16 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+require('./routes/bizRoute')(app);
+
+app.use((err, req, res, next) => {
+	res.status(500).json(err.message);
+	next();
+})
+
+
 app.listen(5000, () => {
 	console.log("Server running on port 5000");
 });
+
+
