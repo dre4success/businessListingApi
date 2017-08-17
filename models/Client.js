@@ -11,15 +11,46 @@ const clientSchema = new Schema({
 		type: String,
 		required: "Please Enter Your Email Address",
 		trim: true,
-		unique: true,
+		unique: true
 	},
 	password: {
 		type: String,
 		required: true,
 		minlength: 7
-	}, 
+	},
 	token: String
 });
+
+clientSchema.statics.findByToken = function(token) {
+	try {
+		var decoded = jwt.verify(token, keys.JWT_SECRET);
+	} catch (e) {
+		return Promise.reject();
+	}
+
+	return this.findOne({
+		_id: decoded._id,
+		token
+	});
+};
+
+clientSchema.statics.findByCred = function(email, password) {
+	return this.findOne({ email }).then(client => {
+		if (!client) {
+			return Promise.reject();
+		}
+
+		return new Promise((resolve, reject) => {
+			bcrypt.compare(password, client.password, (err, res) => {
+				if (res) {
+					resolve(client);
+				} else {
+					reject();
+				}
+			});
+		});
+	});
+};
 
 clientSchema.pre("save", function(next) {
 	if (this.isModified("password")) {
