@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+mongoose.Promise = global.Promise;
 
 const bizSchema = new Schema ({
 	name: String,
