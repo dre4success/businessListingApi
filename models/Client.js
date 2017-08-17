@@ -12,29 +12,31 @@ const clientSchema = new Schema({
 		required: "Please Enter Your Email Address",
 		trim: true,
 		unique: true,
-		validate: {
-			validator: validator.isEmail,
-			message: "{VALUE} is not a valid email"
-		}
 	},
 	password: {
 		type: String,
 		required: true,
 		minlength: 7
-	},
-	token: {
-		type: String,
-		required: true
-	}
+	}, 
+	tokens: [{
+		key: {
+			type: String,
+			required: true
+		}
+	}]
 });
 
-clientSchema.methods.generateToken = function() {
-	const token = jwt
-		.sign({ _id: this._id.toHexString() }, keys.JWT_SECRET)
-		.toString();
+clientSchema.methods.generateToken = async function() {
+	// const access = 'auth'
+	const key = jwt
+		.sign({ _id: this._id.toHexString() }, keys.JWT_SECRET).toString();
+
+	this.tokens.push({key});
+
+/*	return await this.save();*/
 
 	return this.save().then(() => {
-		return token;
+		return key;
 	});
 };
 
