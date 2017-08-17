@@ -7,6 +7,10 @@ require("./models/Business");
 mongoose.connect(keys.mongoURI, {
 	useMongoClient: true
 });
+mongoose.Promise = global.Promise;
+mongoose.connection.on('error', (err) => {
+	console.log(`${err.message}`);
+})
 
 const app = express();
 
