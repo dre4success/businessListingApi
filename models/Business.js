@@ -7,6 +7,7 @@ const bizSchema = new Schema ({
 	address: String,
 	description: String,
 	categories: [String]
+	// _client: { type: mongoose.Schema.ObjectId, ref: 'Client'}
 })
 
 module.exports = mongoose.model('Business', bizSchema);
