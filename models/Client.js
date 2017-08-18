@@ -21,9 +21,10 @@ const clientSchema = new Schema({
 	token: String
 });
 
-clientSchema.statics.findByToken = function(token) {
+/*clientSchema.statics.findByToken = function(token) {
+	var decoded
 	try {
-		var decoded = jwt.verify(token, keys.JWT_SECRET);
+		decoded = jwt.verify(token, keys.JWT_SECRET);
 	} catch (e) {
 		return Promise.reject();
 	}
@@ -32,7 +33,7 @@ clientSchema.statics.findByToken = function(token) {
 		_id: decoded._id,
 		token
 	});
-};
+};*/
 
 clientSchema.statics.findByCred = function(email, password) {
 	return this.findOne({ email }).then(client => {
