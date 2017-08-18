@@ -1,14 +1,23 @@
 const mongoose = require("mongoose");
 const Business = mongoose.model("Business");
+const auth = require('../handlers/auth');
+const {authenticate} = require('../handlers/authenticate'); 
 
 module.exports = app => {
-	app.post("/api/business", async (req, res) => {
-		const business = await new Business(req.body).save();
+app.post("/api/business", auth.decodeToken, async (req, res) => {
+	const { name, address, description, categories } = req.body;
 
-		res.status(200).json(business);
-	});
+	const business = await new Business({
+		name,
+		address,
+		description,
+		categories
+		// _client: req.user
+	}).save();
+	res.status(200).json(business);
+});
 
-	app.put("/api/business/:id", async (req, res) => {
+	app.put("/api/business/:id", auth.decodeToken, async (req, res) => {
 		const business = await Business.findOneAndUpdate(
 			{ _id: req.params.id },
 			req.body
@@ -17,18 +26,18 @@ module.exports = app => {
 		res.status(200).json(business);
 	});
 
-	app.delete("/api/business/:id", async (req, res) => {
+	app.delete("/api/business/:id", auth.decodeToken, async (req, res) => {
 		const business = await Business.deleteOne({ _id: req.params.id });
 
 		res.status(200).send("Successfully deleted");
 	});
 
-	app.get("/api/business", async (req, res) => {
+	app.get("/api/business", auth.decodeToken, async (req, res) => {
 		const business = await Business.find();
 		res.status(200).json(business);
 	});
 
-	app.get("/api/business/:id", async (req, res) => {
+	app.get("/api/business/:id", auth.decodeToken, async (req, res) => {
 		const business = await Business.findOne({ _id: req.params.id });
 		res.status(200).json(business);
 	});
