@@ -1,16 +1,20 @@
-const jwt = require("jsonwebtoken");
-const keys = require("../config/dev");
-const expressJwt = require('express-jwt');
-checkToken = expressJwt({secret: keys.JWT_SECRET})
+const jwt = require('jsonwebtoken');
+const keys = require('../config/dev');
+const mongoose = require('mongoose');
+const Client = mongoose.model('Client');
 
-exports.signToken = id => {
-	return jwt.sign({ _id: id }, keys.JWT_SECRET);
+const signToken = user => {
+  const timestamp = new Date().getTime();
+  return jwt.sign({ uid: user._id, iat: timestamp }, keys.JWT_SECRET);
 };
 
-exports.decodeToken = (req, res, next) => {
-	checkToken, (req, res) => {
-		if (!req.user) return res.sendStatus(400);
-		res.sendStatus(200);
+exports.signUp = async (req, res, next) => {
+	
+	const email = req.body.email
+	const password = req.body.password
+
+	if(!email || !password) {
+		return res.status(422).send({ error: 'You must provide email and password'});
 	}
-	next();
+
 }
