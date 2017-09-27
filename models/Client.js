@@ -9,7 +9,7 @@ const keys = require('../config/dev');
 const clientSchema = new Schema({
   email: {
     type: String,
-    required: 'Please Enter Your Email Address',
+    required: true,
     trim: true,
     unique: true
   },
@@ -39,5 +39,13 @@ clientSchema.pre('save', async function(next) {
     next(e);
   }
 });
+
+clientSchema.methods.comparePassword = function (clientPassword) {
+	try {
+	return bcrypt.compare(clientPassword, this.password);
+	} catch (err) {
+		console.error(err)
+	}
+} 
 
 module.exports = mongoose.model('Client', clientSchema);
