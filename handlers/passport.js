@@ -9,7 +9,8 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const LocalStrategy = require('passport-local');
 
 /* 
-	Sign in user when using passport local strategy
+  Sign in user when using passport local strategy
+  Authentication
 */
 
 // Create local strategy
@@ -21,21 +22,46 @@ const localLogin = new LocalStrategy(
       // verify username and password
       const client = await Client.findOne({ email }).exec();
       if (!client) {
-        return done(null, false, {message: 'Incorrect Email or Password'});
-        // return [false, { message: 'Incorrect email or password' }];
+        return done(null, false, { message: 'Incorrect Email or Password' });
       }
 
       // compare passwords
       if (!await client.comparePassword(password)) {
-				//return [false, { message: 'Incorrect password or email' }];
-				return done(null, false, {message: 'Incorrect Email or Password'});
-				
-			}
-			
+        return done(null, false, { message: 'Incorrect Email or Password' });
+      }
+
       return done(null, client);
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-	});
-	
-	passport.use(localLogin);
+  }
+);
+
+/* 
+   authorization, when a user wants to make an authenticated request
+   to a protected route, we verify the token
+*/
+// setup Options for jwt strategy
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+  secretOrKey: keys.JWT_SECRET
+}
+
+// Create Jwt Strategy
+const jwtAuthorize = new JwtStrategy(jwtOptions, async (payload, done) => {
+
+  try {
+    // see if the client ID in the payload exists
+    const client = await Client.findById(payload.uid);
+    if(!client) {
+      return done(null, false);
+    }
+    return done(null, client);
+  } catch(e) {
+    res.status(400).send(err)
+  }
+
+});
+
+passport.use(localLogin);
+passport.use(jwtAuthorize);
