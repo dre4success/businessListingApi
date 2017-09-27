@@ -38,5 +38,6 @@ exports.signUp = async (req, res) => {
 
 exports.signIn = (req, res) => {
   // when user signs in, we send them back the token
-  res.send({ token: signToken(req.client) });
+  // req.user is already on passport local strategy
+  res.send({ token: signToken(req.user) });
 };
