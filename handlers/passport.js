@@ -20,17 +20,17 @@ const localLogin = new LocalStrategy(
   async (email, password, done) => {
     try {
       // verify username and password
-      const client = await Client.findOne({ email }).exec();
+      const client = await Client.findOne({ email });
       if (!client) {
-        return done(null, false, { message: 'Incorrect Email or Password' });
+        return done(null, false);
       }
-
       // compare passwords
       if (!await client.comparePassword(password)) {
-        return done(null, false, { message: 'Incorrect Email or Password' });
+        return done(null, false);
       }
-
+      
       return done(null, client);
+      
     } catch (err) {
       console.error(err);
     }
@@ -52,7 +52,7 @@ const jwtAuthorize = new JwtStrategy(jwtOptions, async (payload, done) => {
 
   try {
     // see if the client ID in the payload exists
-    const client = await Client.findById(payload.uid);
+    const client = await Client.findOne({ _id: payload.uid});
     if(!client) {
       return done(null, false);
     }
